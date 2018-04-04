@@ -24,8 +24,8 @@ LOG_DATE="$( date "+%Y-%m-%d %H:%M:%S" )"
 OUT_WHO="$( who )"
 
 if [ "$(id -u)" -ne "0" ]; then
-  netstat -ln   > /tmp/netstat-listen.log
-  netstat -n    > /tmp/netstat.log
+  netstat -n    1> /tmp/netstat.log        2> /dev/null
+  netstat -ln   1> /tmp/netstat-listen.log 2> /dev/null
   echo "IPTables dump is only available on root login." > /tmp/iptables-conf.log
 else
   netstat -lnp  > /tmp/netstat-listen.log
@@ -61,6 +61,6 @@ ${OUT_WHO}
 Attaching other relevant system data.
 
 EOF
-) | /usr/bin/mutt -s "[LOGIN-NOTIFY] $(hostname) Login of ${LOG_USER} on ${LOG_DATE}" -e "set from=${FROM}" -a /tmp/netstat-listen.log -a /tmp/netstat.log -a /tmp/processes.log -a /tmp/who.log -a /tmp/iptables-conf.log -- "${TO}"
+) | /usr/bin/mutt -s "[LOGIN-NOTIFY] $(hostname) Login of ${LOG_USER} on ${LOG_DATE}" -e "set copy=no" -e "set from=${FROM}" -a /tmp/netstat-listen.log -a /tmp/netstat.log -a /tmp/processes.log -a /tmp/who.log -a /tmp/iptables-conf.log -- "${TO}"
 
 rm /tmp/netstat-listen.log /tmp/netstat.log /tmp/processes.log /tmp/who.log /tmp/iptables-conf.log
